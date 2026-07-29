@@ -10,7 +10,7 @@ export default function ProtectedLayout({ children }: { children: ReactNode }) {
         <LogoutButton />
       </header>
 
-      <main className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden bg-gray-50">{children}</main>
+      <main className="flex min-w-0 flex-1 flex-col overflow-y-auto overflow-x-hidden bg-gray-50">{children}</main>
 
       <NavBar />
     </div>

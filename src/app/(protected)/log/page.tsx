@@ -98,7 +98,7 @@ export default function LogPage() {
   }
 
   return (
-    <div className="px-4 py-6">
+    <div className="flex flex-1 flex-col px-4 py-6">
       <PageHeader
         title="Past Log"
         action={
@@ -108,11 +108,11 @@ export default function LogPage() {
         }
       />
 
-      <Card className="p-0">
+      <Card className="flex flex-1 flex-col p-0">
         {!entries ? (
-          <div className="px-4 py-8 text-center text-gray-500">Loading…</div>
+          <div className="flex flex-1 items-center justify-center text-gray-500">Loading…</div>
         ) : entries.length === 0 ? (
-          <div className="px-4 py-8 text-center text-sm text-gray-500">No log entries yet.</div>
+          <div className="flex flex-1 items-center justify-center text-sm text-gray-500">No log entries yet.</div>
         ) : (
           <div className="divide-y divide-gray-100">
             {entries.map((entry) => (

@@ -136,7 +136,7 @@ export default function GoalsPage() {
   const today = localISODate();
 
   return (
-    <div className="px-4 py-6">
+    <div className="flex flex-1 flex-col px-4 py-6">
       <PageHeader
         title="Goals"
         action={
@@ -146,11 +146,11 @@ export default function GoalsPage() {
         }
       />
 
-      <Card className="p-0">
+      <Card className="flex flex-1 flex-col p-0">
         {!goals ? (
-          <div className="px-4 py-8 text-center text-gray-500">Loading…</div>
+          <div className="flex flex-1 items-center justify-center text-gray-500">Loading…</div>
         ) : goals.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 px-4 py-8 text-center">
+          <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 text-gray-300">
               <SparkleIcon />
             </div>

@@ -93,7 +93,7 @@ export default function NotesPage() {
   }
 
   return (
-    <div className="px-4 py-6">
+    <div className="flex flex-1 flex-col px-4 py-6">
       <PageHeader
         title="Notes"
         action={
@@ -103,11 +103,11 @@ export default function NotesPage() {
         }
       />
 
-      <Card className="p-0">
+      <Card className="flex flex-1 flex-col p-0">
         {!notes ? (
-          <div className="px-4 py-8 text-center text-gray-500">Loading…</div>
+          <div className="flex flex-1 items-center justify-center text-gray-500">Loading…</div>
         ) : notes.length === 0 ? (
-          <div className="px-4 py-8 text-center text-sm text-gray-500">No notes yet.</div>
+          <div className="flex flex-1 items-center justify-center text-sm text-gray-500">No notes yet.</div>
         ) : (
           <div className="divide-y divide-gray-100">
             {notes.map((note) => (

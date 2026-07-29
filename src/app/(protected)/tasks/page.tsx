@@ -62,7 +62,7 @@ export default function TasksPage() {
   const visibleTasks = (tasks ?? []).filter((t) => showDone || t.status === 'open');
 
   return (
-    <div className="px-4 py-6">
+    <div className="flex flex-1 flex-col px-4 py-6">
       <PageHeader
         title="Tasks"
         action={
@@ -72,16 +72,16 @@ export default function TasksPage() {
         }
       />
 
-      <label className="mb-4 flex items-center gap-2 text-sm text-gray-500">
+      <label className="mb-4 flex shrink-0 items-center gap-2 text-sm text-gray-500">
         <Checkbox checked={showDone} onChange={(e) => setShowDone(e.target.checked)} />
         Show done
       </label>
 
-      <Card className="p-0">
+      <Card className="flex flex-1 flex-col p-0">
         {!tasks ? (
-          <div className="px-4 py-8 text-center text-gray-500">Loading…</div>
+          <div className="flex flex-1 items-center justify-center text-gray-500">Loading…</div>
         ) : visibleTasks.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 px-4 py-8 text-center">
+          <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 text-gray-300">
               <SparkleIcon />
             </div>
