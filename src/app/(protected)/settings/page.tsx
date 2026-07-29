@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db/dexie';
 import { createCategory, deleteCategory } from '@/lib/db/repositories/categoriesRepo';
+import { exportBackup, importBackup, type BackupFile } from '@/lib/db/backup';
 import {
   getPushSupportStatus,
   subscribeToPush,
@@ -17,6 +18,107 @@ import Card from '@/components/ui/Card';
 import IconButton from '@/components/ui/IconButton';
 import PageHeader from '@/components/ui/PageHeader';
 import { TrashIcon } from '@/components/ui/icons';
+
+function backupFilename(): string {
+  const now = new Date();
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `sched-backup-${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}.json`;
+}
+
+function BackupSection() {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<{ tone: 'success' | 'error'; text: string } | null>(null);
+
+  async function handleExport() {
+    setBusy(true);
+    setMessage(null);
+    try {
+      const backup = await exportBackup();
+      const json = JSON.stringify(backup, null, 2);
+      const filename = backupFilename();
+      const file = new File([json], filename, { type: 'application/json' });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: filename });
+      } else {
+        const url = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+      setMessage({ tone: 'success', text: 'Backup ready.' });
+    } catch (err) {
+      // AbortError means the user just closed the share sheet — not a real failure.
+      if ((err as Error).name !== 'AbortError') {
+        setMessage({ tone: 'error', text: (err as Error).message });
+      }
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function handleImportClick() {
+    fileInputRef.current?.click();
+  }
+
+  async function handleFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+
+    if (!confirm('This replaces all local data (Notes, People, Tasks, Projects, Goals, Log) with the contents of this backup. Continue?')) {
+      return;
+    }
+
+    setBusy(true);
+    setMessage(null);
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text) as BackupFile;
+      await importBackup(parsed);
+      setMessage({ tone: 'success', text: 'Backup restored.' });
+    } catch (err) {
+      setMessage({ tone: 'error', text: (err as Error).message || 'Could not read that file.' });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section className="mb-8">
+      <h2 className="mb-2 text-lg font-semibold text-gray-900">Backup</h2>
+      <p className="mb-3 text-sm text-gray-500">
+        Notes, People, Tasks, Projects, Goals, and the Log live only on this device. Export a backup
+        file regularly so you can restore it if you clear Safari data, delete the app, or switch phones.
+      </p>
+      {message && (
+        <p className={`mb-3 text-sm ${message.tone === 'error' ? 'text-red-600' : 'text-emerald-600'}`}>
+          {message.text}
+        </p>
+      )}
+      <div className="flex gap-2">
+        <Button variant="primary" onClick={handleExport} disabled={busy} className="flex-1">
+          {busy ? 'Working…' : 'Export backup'}
+        </Button>
+        <Button variant="secondary" onClick={handleImportClick} disabled={busy} className="flex-1">
+          Restore from backup
+        </Button>
+      </div>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="application/json"
+        onChange={handleFileSelected}
+        className="hidden"
+      />
+    </section>
+  );
+}
 
 function PushSection() {
   const [status, setStatus] = useState<PushSupportStatus>('unsupported');
@@ -149,6 +251,7 @@ export default function SettingsPage() {
   return (
     <div className="px-4 py-6">
       <PageHeader title="Settings" />
+      <BackupSection />
       <PushSection />
       <CategoriesSection />
     </div>
