@@ -113,7 +113,7 @@ function RangeGoalRow({ goal }: { goal: Goal }) {
     <div className="flex items-center gap-3 px-4 py-3">
       <Checkbox checked={Boolean(goal.completed)} onChange={() => toggleRangeGoalCompleted(goal.id)} />
       <div className="min-w-0 flex-1">
-        <p className={`truncate font-medium ${goal.completed ? 'text-gray-400 line-through' : 'text-gray-900'}`}>
+        <p className={`truncate font-medium ${goal.completed ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
           {goal.title}
         </p>
         <p className="text-xs text-gray-500">Target {formatDueDate(goal.endDate)}</p>
@@ -148,13 +148,13 @@ export default function GoalsPage() {
 
       <Card className="p-0">
         {!goals ? (
-          <div className="px-4 py-8 text-center text-gray-400">Loading…</div>
+          <div className="px-4 py-8 text-center text-gray-500">Loading…</div>
         ) : goals.length === 0 ? (
           <div className="flex flex-col items-center gap-2 px-4 py-8 text-center">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 text-gray-300">
               <SparkleIcon />
             </div>
-            <p className="text-sm text-gray-400">No goals yet.</p>
+            <p className="text-sm text-gray-500">No goals yet.</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-100">

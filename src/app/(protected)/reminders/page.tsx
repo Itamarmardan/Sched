@@ -148,13 +148,13 @@ export default function RemindersPage() {
 
       <Card className="p-0">
         {loading ? (
-          <div className="px-4 py-8 text-center text-gray-400">Loading…</div>
+          <div className="px-4 py-8 text-center text-gray-500">Loading…</div>
         ) : visibleReminders.length === 0 ? (
           <div className="flex flex-col items-center gap-2 px-4 py-8 text-center">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 text-gray-300">
               <BellIcon />
             </div>
-            <p className="text-sm text-gray-400">Nothing here.</p>
+            <p className="text-sm text-gray-500">Nothing here.</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-100">
@@ -162,7 +162,7 @@ export default function RemindersPage() {
               <div key={reminder.uid} className="flex items-center gap-3 px-4 py-3">
                 <Checkbox checked={reminder.completed} onChange={() => handleToggleComplete(reminder)} />
                 <div className="min-w-0 flex-1">
-                  <p className={`truncate font-medium ${reminder.completed ? 'text-gray-400 line-through' : 'text-gray-900'}`}>
+                  <p className={`truncate font-medium ${reminder.completed ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
                     {reminder.title}
                   </p>
                   <p className="text-xs text-gray-500">{formatDueDate(reminder.dueDate)}</p>

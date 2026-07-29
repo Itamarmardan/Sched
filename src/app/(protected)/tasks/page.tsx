@@ -79,13 +79,13 @@ export default function TasksPage() {
 
       <Card className="p-0">
         {!tasks ? (
-          <div className="px-4 py-8 text-center text-gray-400">Loading…</div>
+          <div className="px-4 py-8 text-center text-gray-500">Loading…</div>
         ) : visibleTasks.length === 0 ? (
           <div className="flex flex-col items-center gap-2 px-4 py-8 text-center">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 text-gray-300">
               <SparkleIcon />
             </div>
-            <p className="text-sm text-gray-400">No tasks.</p>
+            <p className="text-sm text-gray-500">No tasks.</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-100">
@@ -96,7 +96,7 @@ export default function TasksPage() {
                   onChange={() => setTaskStatus(task.id, task.status === 'done' ? 'open' : 'done')}
                 />
                 <div className="min-w-0 flex-1 cursor-pointer" onClick={() => setEditing(task)}>
-                  <p className={`truncate font-medium ${task.status === 'done' ? 'text-gray-400 line-through' : 'text-gray-900'}`}>
+                  <p className={`truncate font-medium ${task.status === 'done' ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
                     {task.title}
                   </p>
                   <p className="text-xs text-gray-500">

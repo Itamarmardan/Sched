@@ -75,9 +75,9 @@ export default function PeoplePage() {
 
       <Card className="p-0">
         {!people ? (
-          <div className="px-4 py-8 text-center text-gray-400">Loading…</div>
+          <div className="px-4 py-8 text-center text-gray-500">Loading…</div>
         ) : people.length === 0 ? (
-          <div className="px-4 py-8 text-center text-sm text-gray-400">No people yet.</div>
+          <div className="px-4 py-8 text-center text-sm text-gray-500">No people yet.</div>
         ) : (
           <div className="divide-y divide-gray-100">
             {people.map((person) => (

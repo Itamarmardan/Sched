@@ -108,9 +108,9 @@ function CategoriesSection() {
       <h2 className="mb-2 text-lg font-semibold text-gray-900">Task Categories</h2>
       <Card className="mb-3 p-0">
         {!categories ? (
-          <div className="px-4 py-6 text-center text-gray-400">Loading…</div>
+          <div className="px-4 py-6 text-center text-gray-500">Loading…</div>
         ) : categories.length === 0 ? (
-          <div className="px-4 py-6 text-center text-sm text-gray-400">No categories yet.</div>
+          <div className="px-4 py-6 text-center text-sm text-gray-500">No categories yet.</div>
         ) : (
           <div className="divide-y divide-gray-100">
             {categories.map((c) => (

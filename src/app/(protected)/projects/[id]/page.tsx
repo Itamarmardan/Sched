@@ -146,21 +146,21 @@ export default function ProjectDetailPage() {
         )}
       </Card>
 
-      <h2 className="mb-2.5 px-1 text-xs font-semibold uppercase tracking-wider text-gray-400">Checklist</h2>
+      <h2 className="mb-2.5 px-1 text-xs font-semibold uppercase tracking-wider text-gray-500">Checklist</h2>
 
       <Card className="mb-3 p-0">
         {!items ? (
-          <div className="px-4 py-8 text-center text-gray-400">Loading…</div>
+          <div className="px-4 py-8 text-center text-gray-500">Loading…</div>
         ) : items.length === 0 ? (
-          <div className="px-4 py-8 text-center text-sm text-gray-400">No checklist items yet.</div>
+          <div className="px-4 py-8 text-center text-sm text-gray-500">No checklist items yet.</div>
         ) : (
           <div className="divide-y divide-gray-100">
             {items.map((item) => (
               <div key={item.id} className="flex items-center gap-3 px-4 py-3">
                 <Checkbox checked={item.done} onChange={() => toggleProjectItem(item.id)} />
                 <div className="min-w-0 flex-1">
-                  <p className={`truncate ${item.done ? 'text-gray-400 line-through' : 'text-gray-900'}`}>{item.title}</p>
-                  {item.dueDate && <p className="text-xs text-gray-400">{formatDueDate(item.dueDate)}</p>}
+                  <p className={`truncate ${item.done ? 'text-gray-500 line-through' : 'text-gray-900'}`}>{item.title}</p>
+                  {item.dueDate && <p className="text-xs text-gray-500">{formatDueDate(item.dueDate)}</p>}
                 </div>
                 <IconButton label="Remove item" tone="danger" onClick={() => deleteProjectItem(item.id)}>
                   <TrashIcon width={16} height={16} />

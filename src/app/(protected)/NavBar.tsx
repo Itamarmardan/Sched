@@ -2,38 +2,42 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { HomeIcon, CalendarIcon, CheckSquareIcon, TargetIcon, DotsGridIcon } from '@/components/ui/icons';
 
-const NAV_ITEMS = [
-  { href: '/', label: 'Home' },
-  { href: '/calendar', label: 'Calendar' },
-  { href: '/reminders', label: 'Reminders' },
-  { href: '/notes', label: 'Notes' },
-  { href: '/people', label: 'People' },
-  { href: '/tasks', label: 'Tasks' },
-  { href: '/projects', label: 'Projects' },
-  { href: '/goals', label: 'Goals' },
-  { href: '/log', label: 'Log' },
-  { href: '/settings', label: 'Settings' },
+const MORE_PREFIXES = ['/reminders', '/notes', '/people', '/projects', '/log', '/settings'];
+
+const TABS = [
+  { href: '/', label: 'Home', Icon: HomeIcon, match: (p: string) => p === '/' },
+  { href: '/calendar', label: 'Calendar', Icon: CalendarIcon, match: (p: string) => p.startsWith('/calendar') },
+  { href: '/tasks', label: 'Tasks', Icon: CheckSquareIcon, match: (p: string) => p.startsWith('/tasks') },
+  { href: '/goals', label: 'Goals', Icon: TargetIcon, match: (p: string) => p.startsWith('/goals') },
+  {
+    href: '/more',
+    label: 'More',
+    Icon: DotsGridIcon,
+    match: (p: string) => p === '/more' || MORE_PREFIXES.some((prefix) => p.startsWith(prefix)),
+  },
 ];
 
 export default function NavBar() {
   const pathname = usePathname();
 
   return (
-    <nav className="shrink-0 border-t border-gray-100 bg-white">
-      <ul className="flex gap-1 overflow-x-auto px-2 py-2 text-sm">
-        {NAV_ITEMS.map((item) => {
-          const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
+    <nav className="min-w-0 shrink-0 border-t border-gray-100 bg-white pb-[env(safe-area-inset-bottom)]">
+      <ul className="flex">
+        {TABS.map(({ href, label, Icon, match }) => {
+          const active = match(pathname);
           return (
-            <li key={item.href} className="shrink-0">
+            <li key={href} className="min-w-0 flex-1">
               <Link
-                href={item.href}
-                className={[
-                  'block whitespace-nowrap rounded-full px-3.5 py-1.5 font-medium transition-colors',
-                  active ? 'bg-indigo-50 text-indigo-600' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900',
-                ].join(' ')}
+                href={href}
+                className={`flex min-h-[56px] flex-col items-center justify-center gap-0.5 py-2 transition-colors ${
+                  active ? 'text-indigo-600' : 'text-gray-500 active:text-gray-700'
+                }`}
+                aria-current={active ? 'page' : undefined}
               >
-                {item.label}
+                <Icon width={23} height={23} strokeWidth={active ? 2 : 1.75} />
+                <span className="text-[11px] font-medium">{label}</span>
               </Link>
             </li>
           );

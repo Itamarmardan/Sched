@@ -43,7 +43,7 @@ function DashboardHeader() {
 function SectionHeading({ title, href, linkLabel }: { title: string; href: string; linkLabel: string }) {
   return (
     <div className="mb-2.5 flex items-center justify-between px-1">
-      <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-400">{title}</h2>
+      <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-500">{title}</h2>
       <Link href={href} className="text-xs font-medium text-indigo-600 hover:text-indigo-700">
         {linkLabel} →
       </Link>
@@ -55,7 +55,7 @@ function EmptyRow({ icon, text }: { icon: ReactNode; text: string }) {
   return (
     <div className="flex flex-col items-center gap-2 px-4 py-8 text-center">
       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 text-gray-300">{icon}</div>
-      <p className="text-sm text-gray-400">{text}</p>
+      <p className="text-sm text-gray-500">{text}</p>
     </div>
   );
 }
@@ -216,7 +216,7 @@ export default function DashboardPage() {
                 return (
                   <div key={goal.id} className="flex items-center gap-3 px-4 py-3">
                     <Checkbox checked={completed} onChange={() => toggleGoalCompletion(goal.id, today)} />
-                    <p className={`flex-1 truncate ${completed ? 'text-gray-400 line-through' : 'font-medium text-gray-900'}`}>
+                    <p className={`flex-1 truncate ${completed ? 'text-gray-500 line-through' : 'font-medium text-gray-900'}`}>
                       {goal.title}
                     </p>
                     <Badge tone="neutral">Daily goal</Badge>

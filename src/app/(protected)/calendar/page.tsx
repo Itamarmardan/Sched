@@ -126,13 +126,13 @@ export default function CalendarPage() {
 
       <Card className="p-0">
         {loading ? (
-          <div className="px-4 py-8 text-center text-gray-400">Loading…</div>
+          <div className="px-4 py-8 text-center text-gray-500">Loading…</div>
         ) : events.length === 0 ? (
           <div className="flex flex-col items-center gap-2 px-4 py-8 text-center">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 text-gray-300">
               <CalendarIcon />
             </div>
-            <p className="text-sm text-gray-400">No events in the next 30 days.</p>
+            <p className="text-sm text-gray-500">No events in the next 30 days.</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-100">

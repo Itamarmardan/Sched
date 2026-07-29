@@ -149,7 +149,7 @@ export default function TaskForm({
             {values.checklist.map((item) => (
               <div key={item.id} className="flex items-center gap-2 px-3 py-2">
                 <Checkbox checked={item.done} onChange={() => toggleChecklistItem(item.id)} />
-                <span className={`flex-1 text-sm ${item.done ? 'text-gray-400 line-through' : 'text-gray-700'}`}>
+                <span className={`flex-1 text-sm ${item.done ? 'text-gray-500 line-through' : 'text-gray-700'}`}>
                   {item.text}
                 </span>
                 <IconButton label="Remove item" tone="danger" onClick={() => removeChecklistItem(item.id)}>

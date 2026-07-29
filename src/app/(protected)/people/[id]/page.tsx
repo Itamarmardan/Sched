@@ -109,7 +109,7 @@ export default function PersonDetailPage() {
       {person.notes && <p className="mb-6 whitespace-pre-wrap text-sm text-gray-700">{person.notes}</p>}
 
       <div className="mb-2.5 flex items-center justify-between px-1">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-400">Tasks</h2>
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Tasks</h2>
         <Button variant="primary" size="sm" onClick={() => setTaskModalOpen(true)}>
           + Add
         </Button>
@@ -117,13 +117,13 @@ export default function PersonDetailPage() {
 
       <Card className="p-0">
         {!tasks ? (
-          <div className="px-4 py-8 text-center text-gray-400">Loading…</div>
+          <div className="px-4 py-8 text-center text-gray-500">Loading…</div>
         ) : tasks.length === 0 ? (
           <div className="flex flex-col items-center gap-2 px-4 py-8 text-center">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 text-gray-300">
               <SparkleIcon />
             </div>
-            <p className="text-sm text-gray-400">No tasks for {person.name} yet.</p>
+            <p className="text-sm text-gray-500">No tasks for {person.name} yet.</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-100">
@@ -134,7 +134,7 @@ export default function PersonDetailPage() {
                   onChange={() => setTaskStatus(task.id, task.status === 'done' ? 'open' : 'done')}
                 />
                 <div className="min-w-0 flex-1 cursor-pointer" onClick={() => setEditingTask(task)}>
-                  <p className={`truncate font-medium ${task.status === 'done' ? 'text-gray-400 line-through' : 'text-gray-900'}`}>
+                  <p className={`truncate font-medium ${task.status === 'done' ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
                     {task.title}
                   </p>
                   <p className="text-xs text-gray-500">
