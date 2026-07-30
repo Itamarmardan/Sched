@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import RegisterServiceWorker from "./RegisterServiceWorker";
+import ViewportFix from "./ViewportFix";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,22 +49,26 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <head>
         {/* Runs before first paint. iOS standalone PWAs can report an incorrect
-            window/visualViewport height on cold launch (a known WebKit quirk with
-            dvh units), which shows up as the app rendering shrunk until a relayout
-            corrects it. Setting --app-height from JS and keeping it live via resize/
-            orientationchange/visualViewport is a more reliable cross-version fallback
-            than relying on CSS dvh alone. */}
+            window/visualViewport size on cold launch (a known WebKit quirk affecting
+            both dvh height and the layout viewport width), which shows up as the app
+            rendering shrunk/zoomed-out or wider-than-screen and pannable until some
+            later relayout (e.g. a tap) corrects it. Setting --app-height from JS and
+            keeping it live via resize/orientationchange/visualViewport covers height;
+            nudging the viewport meta tag forces WebKit to redo the width calculation
+            immediately instead of waiting for the user to trigger it by accident. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){function s(){var h=(window.visualViewport&&window.visualViewport.height)||window.innerHeight;document.documentElement.style.setProperty('--app-height',h+'px');}s();window.addEventListener('resize',s);window.addEventListener('orientationchange',s);if(window.visualViewport){window.visualViewport.addEventListener('resize',s);}})();`,
+            __html: `(function(){function s(){var h=(window.visualViewport&&window.visualViewport.height)||window.innerHeight;document.documentElement.style.setProperty('--app-height',h+'px');}s();window.addEventListener('resize',s);window.addEventListener('orientationchange',s);if(window.visualViewport){window.visualViewport.addEventListener('resize',s);}function v(){var m=document.querySelector('meta[name="viewport"]');if(!m)return;var o=m.getAttribute('content');m.setAttribute('content',o+', maximum-scale=1');requestAnimationFrame(function(){m.setAttribute('content',o);window.scrollTo(0,0);});}v();})();`,
           }}
         />
       </head>
       <body className="min-h-full flex flex-col">
         <RegisterServiceWorker />
+        <ViewportFix />
         {children}
       </body>
     </html>
