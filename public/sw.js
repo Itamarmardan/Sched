@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sched-shell-v1';
+const CACHE_NAME = 'sched-shell-v2';
 const OFFLINE_URL = '/offline.html';
 
 self.addEventListener('install', (event) => {
@@ -22,7 +22,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request).catch(() => caches.match(OFFLINE_URL)),
+      fetch(event.request, { cache: 'no-store' }).catch(() => caches.match(OFFLINE_URL)),
     );
   }
 });
