@@ -6,12 +6,19 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db/dexie';
 import { toggleGoalCompletion } from '@/lib/db/repositories/goalsRepo';
 import { setTaskStatus } from '@/lib/db/repositories/tasksRepo';
+import {
+  toggleDailyHabitCompletion,
+  toggleWeeklyHabitCompletion,
+  setTimesPerDayCompletionCount,
+} from '@/lib/db/repositories/habitsRepo';
+import { isHabitActive, todayCompletionCount, habitFrequencyLabel } from '@/lib/habits';
 import { isoDateOnly, localISODate, addDays } from '@/lib/dateRange';
 import type { CalendarEventDTO, ReminderDTO } from '@/lib/types';
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import Checkbox from '@/components/ui/Checkbox';
-import { CalendarIcon, BellIcon, SparkleIcon } from '@/components/ui/icons';
+import IconButton from '@/components/ui/IconButton';
+import { CalendarIcon, BellIcon, SparkleIcon, FlameIcon } from '@/components/ui/icons';
 
 function greetingForHour(hour: number): string {
   if (hour < 12) return 'Good morning';
@@ -137,12 +144,15 @@ export default function DashboardPage() {
   const people = useLiveQuery(() => db.people.toArray(), []);
   const goals = useLiveQuery(() => db.goals.toArray(), []);
   const todayCompletions = useLiveQuery(() => db.goalCompletions.where('date').equals(today).toArray(), [today]);
+  const habits = useLiveQuery(() => db.habits.toArray(), []);
+  const habitCompletions = useLiveQuery(() => db.habitCompletions.toArray(), []);
 
   const personName = (id?: string) => people?.find((p) => p.id === id)?.name;
   const todaysReminders = (reminders ?? []).filter((r) => r.dueDate && r.dueDate.slice(0, 10) === today && !r.completed);
   const activeDailyGoals = (goals ?? []).filter(
     (g) => g.type === 'daily' && g.startDate <= today && today <= g.endDate,
   );
+  const activeHabits = (habits ?? []).filter((h) => isHabitActive(h, today));
 
   const agendaLoading = !events && !reminders && !eventsError && !remindersError;
   const agendaCount = todaysReminders.length + (events?.length ?? 0);
@@ -220,6 +230,65 @@ export default function DashboardPage() {
                       {goal.title}
                     </p>
                     <Badge tone="neutral">Daily goal</Badge>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </Card>
+      </section>
+
+      <section className="mt-7">
+        <SectionHeading title="Habits" href="/habits" linkLabel="Habits" />
+        <Card className="p-0">
+          {!habits || !habitCompletions ? (
+            <EmptyRow icon={<FlameIcon />} text="Loading…" />
+          ) : activeHabits.length === 0 ? (
+            <EmptyRow icon={<FlameIcon />} text="No habits due today." />
+          ) : (
+            <div className="divide-y divide-gray-100">
+              {activeHabits.map((habit) => {
+                const completions = habitCompletions.filter((c) => c.habitId === habit.id);
+                const count = todayCompletionCount(habit, completions, today);
+                return (
+                  <div key={habit.id} className="flex items-center gap-3 px-4 py-3">
+                    {habit.frequency === 'times_per_day' ? (
+                      <div className="flex shrink-0 items-center gap-1">
+                        <IconButton
+                          label="Fewer today"
+                          disabled={count <= 0}
+                          onClick={() => setTimesPerDayCompletionCount(habit.id, today, count - 1)}
+                        >
+                          <span className="text-lg leading-none">−</span>
+                        </IconButton>
+                        <span className="w-6 text-center text-sm font-medium text-gray-900">{count}</span>
+                        <IconButton
+                          label="One more today"
+                          onClick={() => setTimesPerDayCompletionCount(habit.id, today, count + 1)}
+                        >
+                          <span className="text-lg leading-none">+</span>
+                        </IconButton>
+                      </div>
+                    ) : (
+                      <Checkbox
+                        checked={count > 0}
+                        onChange={() =>
+                          habit.frequency === 'weekly'
+                            ? toggleWeeklyHabitCompletion(habit.id, today)
+                            : toggleDailyHabitCompletion(habit.id, today)
+                        }
+                      />
+                    )}
+                    <p
+                      className={`flex-1 truncate ${
+                        count > 0 && habit.frequency !== 'times_per_day'
+                          ? 'text-gray-500 line-through'
+                          : 'font-medium text-gray-900'
+                      }`}
+                    >
+                      {habit.title}
+                    </p>
+                    <Badge tone="neutral">{habitFrequencyLabel(habit)}</Badge>
                   </div>
                 );
               })}

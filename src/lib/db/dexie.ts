@@ -92,6 +92,32 @@ export type LogEntry = {
   updatedAt: string;
 };
 
+export type HabitFrequency = 'daily' | 'times_per_day' | 'weekly';
+
+export type Habit = {
+  id: string;
+  title: string;
+  frequency: HabitFrequency;
+  timesPerDay?: number; // only meaningful when frequency === 'times_per_day'
+  startDate: string; // ISO date
+  endDate?: string; // ISO date; omitted means no end
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type HabitCompletion = {
+  id: string; // `${habitId}_${dateOrWeekKey}`
+  habitId: string;
+  date: string; // ISO date for daily/times_per_day; ISO-week key (e.g. 2026-W05) for weekly
+  count: number; // times completed for that date/week
+};
+
+export type Setting = {
+  key: string;
+  value: string;
+};
+
 const db = new Dexie('SchedDatabase') as Dexie & {
   notes: EntityTable<Note, 'id'>;
   people: EntityTable<Person, 'id'>;
@@ -102,6 +128,9 @@ const db = new Dexie('SchedDatabase') as Dexie & {
   goals: EntityTable<Goal, 'id'>;
   goalCompletions: EntityTable<GoalCompletion, 'id'>;
   logEntries: EntityTable<LogEntry, 'id'>;
+  habits: EntityTable<Habit, 'id'>;
+  habitCompletions: EntityTable<HabitCompletion, 'id'>;
+  settings: EntityTable<Setting, 'key'>;
 };
 
 db.version(1).stores({
@@ -114,6 +143,12 @@ db.version(1).stores({
   goals: 'id, type, startDate, endDate, updatedAt',
   goalCompletions: 'id, goalId, date',
   logEntries: 'id, date, updatedAt',
+});
+
+db.version(2).stores({
+  habits: 'id, startDate, endDate, updatedAt',
+  habitCompletions: 'id, habitId, date',
+  settings: 'key',
 });
 
 export { db };

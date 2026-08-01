@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db/dexie';
 import { createCategory, deleteCategory } from '@/lib/db/repositories/categoriesRepo';
+import { getNavSlots, setNavSlots } from '@/lib/db/repositories/settingsRepo';
+import { NAV_CATEGORIES, NAV_CATEGORY_KEYS, DEFAULT_NAV_SLOTS, type NavCategoryKey } from '@/lib/navCategories';
 import { exportBackup, importBackup, type BackupFile } from '@/lib/db/backup';
 import {
   getPushSupportStatus,
@@ -14,6 +16,7 @@ import {
 } from '@/lib/push/subscribeClient';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import Select from '@/components/ui/Select';
 import Card from '@/components/ui/Card';
 import IconButton from '@/components/ui/IconButton';
 import PageHeader from '@/components/ui/PageHeader';
@@ -195,6 +198,47 @@ function PushSection() {
   );
 }
 
+function BottomTabsSection() {
+  const slots = useLiveQuery(getNavSlots, []) ?? DEFAULT_NAV_SLOTS;
+
+  async function handleChange(index: 0 | 1, value: NavCategoryKey) {
+    const next: [NavCategoryKey, NavCategoryKey] = [...slots];
+    const otherIndex = index === 0 ? 1 : 0;
+    if (value === next[otherIndex]) {
+      // Swap instead of allowing the same category in both slots.
+      next[otherIndex] = next[index];
+    }
+    next[index] = value;
+    await setNavSlots(next);
+  }
+
+  return (
+    <section className="mb-8">
+      <h2 className="mb-2 text-lg font-semibold text-gray-900">Bottom Tabs</h2>
+      <p className="mb-3 text-sm text-gray-500">
+        Home and Calendar are always shown. Choose what fills the other two slots — anything else
+        stays one tap away under More.
+      </p>
+      <div className="flex gap-2">
+        {([0, 1] as const).map((index) => (
+          <Select
+            key={index}
+            value={slots[index]}
+            onChange={(e) => handleChange(index, e.target.value as NavCategoryKey)}
+            className="flex-1"
+          >
+            {NAV_CATEGORY_KEYS.map((key) => (
+              <option key={key} value={key}>
+                {NAV_CATEGORIES[key].label}
+              </option>
+            ))}
+          </Select>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function CategoriesSection() {
   const categories = useLiveQuery(() => db.categories.orderBy('name').toArray(), []);
   const [name, setName] = useState('');
@@ -251,6 +295,7 @@ export default function SettingsPage() {
   return (
     <div className="px-4 py-6">
       <PageHeader title="Settings" />
+      <BottomTabsSection />
       <BackupSection />
       <PushSection />
       <CategoriesSection />
